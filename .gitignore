@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# 本地配置（含个人路径，不上传）
+.qc_tool_config.json
+qc_tool_config.json
+
+# 业务数据 / 调试残留（含客户信息，严禁上传）
+customer_info.txt
+excel_full_dump.txt
+orders_extract.txt
+other_sheets.txt
+word_structures.txt
+word_xml.txt
+liujiali.txt
+print_*.ps1
+render_*.ps1
+print_paths.txt
+render_paths.txt
+runs_check.txt
+preview/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
