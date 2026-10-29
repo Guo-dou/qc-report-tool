@@ -5,12 +5,12 @@
  侧弯支具出厂质检表：自动生成 → 归档 → 打印 一体化程序
 ================================================================================
 流程（对应手动操作步骤）：
-  1. 读取《苏州交复工作跟进表》Excel 中"订单跟踪"表的数据
+  1. 读取工作跟进表 Excel 中"订单跟踪"表的数据
   2. 以空模板《侧弯支具出厂质检报告.docx》为底稿生成质检表
      （自动填写：模型名称、线材批次、打印设备、理论重量、实际重量；
        检测项勾选/质检人/日期因 Excel 中无数据而留空，与示例一致）
   3. 按 "订单编号-客户名.docx" 命名
-  4. 归档到 交复侧弯订单管理/<客户名称>/<订单编号>/ 目录（目录不存在会自动创建）
+  4. 归档到 订单管理根目录/<客户名称>/<订单编号>/ 目录（目录不存在会自动创建）
   5. 按指定打印机打印（默认每份 2 张，可改）
 
 依赖：python-docx、openpyxl（pip install python-docx openpyxl）
@@ -18,15 +18,15 @@
 
 用法示例：
   # 完整流程：生成 + 归档 + 打印（不传 --names 时会提示手动输入模型名称）
-  python qc_pipeline.py --names 聂梓瑜 马睿杰 方馨悦 张梓菡
+  python qc_pipeline.py --names 张三 李四 王五 赵六
   python qc_pipeline.py          # 然后按提示输入模型名称，可多行，空行结束
 
   # 只生成和归档，不打印
-  python qc_pipeline.py --names 聂梓瑜 马睿杰 --skip-print
+  python qc_pipeline.py --names 张三 --skip-print
 
   # 自定义各路径和打印参数
-  python qc_pipeline.py --excel "D:/xx/工作跟进表.xlsx" --template "D:/xx/模板.docx" \
-      --printer "4F-Generic 26C-7SeriesPCL" --copies 3 --names 张三 李四
+  python qc_pipeline.py --excel "D:/工作跟进表.xlsx" --template "D:/质检表模板.docx" \
+      --printer "Your-Printer" --copies 3 --names 张三 李四
 
   # 查看所有可用打印机
   python qc_pipeline.py --list-printers
@@ -50,12 +50,13 @@ except ImportError:
     sys.exit("[错误] 缺少 openpyxl，请先执行: pip install python-docx openpyxl")
 
 # ---------------------------------------------------------------------------
-# 默认路径（按你当前环境配置，可通过命令行参数覆盖）
+# 默认路径（首次使用时在界面/命令行手动选择一次，程序会记住；
+# 这里留空，避免把任何个人/公司路径写死在源码里）
 # ---------------------------------------------------------------------------
-DEFAULT_EXCEL = r"D:\坚果云（勿改名）\苏州交复\苏州交复工作跟进表-20260323.xlsx"
-DEFAULT_TEMPLATE = r"C:\Users\Administrator\Desktop\质检表\侧弯支具出厂质检报告.docx"
-DEFAULT_BASE_DIR = r"D:\坚果云（勿改名）\苏州交复\01 侧弯订单\交复侧弯订单管理"
-DEFAULT_PRINTER = "4F-Generic 26C-7SeriesPCL"
+DEFAULT_EXCEL = ""
+DEFAULT_TEMPLATE = ""
+DEFAULT_BASE_DIR = ""
+DEFAULT_PRINTER = ""
 DEFAULT_COPIES = 2
 
 # Excel 表头关键字 -> 取数据用的列
@@ -203,7 +204,7 @@ def fill_report(template_path, order):
 
 
 def archive_report(docx_path, base_dir, order):
-    """把质检表移动到 交复侧弯订单管理/<客户名称>/<订单编号>/ 目录（售后订单归档到 0售后件 子目录），返回最终路径。"""
+    """把质检表移动到 订单管理根目录/<客户名称>/<订单编号>/ 目录（售后订单归档到 0售后件 子目录），返回最终路径。"""
     customer = order["customer"] or "未分类客户"
     if order.get("is_after_sale"):
         folder = os.path.join(base_dir, AFTER_SALE_DIR, customer, order["order_no"])
@@ -327,7 +328,7 @@ def main():
     ap.add_argument("--printer", default=DEFAULT_PRINTER, help="打印机名称")
     ap.add_argument("--copies", type=int, default=DEFAULT_COPIES, help="每份打印张数")
     ap.add_argument("--names", nargs="+", default=None,
-                    help="模型名称（患者名），可多个，如 --names 聂梓瑜 马睿杰；不传则进入手动输入模式")
+                    help="模型名称（患者名），可多个，如 --names 张三 李四；不传则进入手动输入模式")
     ap.add_argument("--skip-print", action="store_true", help="只生成和归档，不打印")
     ap.add_argument("--yes", action="store_true", help="打印前不询问，直接打印")
     ap.add_argument("--list-printers", action="store_true", help="列出可用打印机并退出")

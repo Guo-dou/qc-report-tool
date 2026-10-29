@@ -248,7 +248,7 @@ class App(ctk.CTk):
                      text_color=COLOR_TEXT).pack(side="left")
         self.entry_names = ctk.CTkEntry(
             row1,
-            placeholder_text="多个名称用空格 / 逗号分隔，如：聂梓瑜 马睿杰 方馨悦 张梓菡",
+            placeholder_text="多个名称用空格 / 逗号分隔，如：张三 李四 王五",
             font=ctk.CTkFont(size=13), height=38,
             fg_color="#0b1220", border_color=COLOR_BORDER)
         self.entry_names.pack(side="left", fill="x", expand=True)
